@@ -1,17 +1,11 @@
 import cv2 
 import os
-# import imutils 
 import numpy as np
 import json
-# from cam import camera_streams
-# cap=camera_streams(mode="Industrial")
 
 
-with open('./muvro/isolated.json', 'r') as openfile:
-    r= json.load(openfile)
 
-with open('./muvro/isothrust.json', 'r') as openfile:
-    mi,mx= json.load(openfile)
+
 
 def image_loc(foldername):
     # extractte file
@@ -27,7 +21,12 @@ def image_loc(foldername):
 
 def pred_isoplate(image):
     out=0
-    global mi,mx,r
+    with open('./muvro/isolated.json', 'r') as openfile:
+        r= json.load(openfile)
+
+    with open('./muvro/isothrust.json', 'r') as openfile:
+        mi,mx= json.load(openfile)
+
 
     try: img=cv2.imread(image)
     except:img=image
@@ -67,14 +66,8 @@ def pred_isoplate(image):
 
 if __name__=="__main__":
 
-    # bad=image_loc("sona_data/side")
-    # # bad=image_loc("sona_data/wside_wiso")
-
-    # # bad=image_loc("new_data/isoplate")
-    # for i in bad:
-    #     img,out=pred_isoplate(i)
-    #     cv2.imshow("img",img)
-    #     if cv2.waitKey(200)==ord('q'):break
+    from cam import camera_streams
+    cap=camera_streams(mode="Industrial")
 
     while True:
         frame=cap.get_frame((680,500))
@@ -82,5 +75,5 @@ if __name__=="__main__":
         cv2.imshow("img",img)
         if cv2.waitKey(200)==ord('q'):break
     cv2.destroyAllWindows()
-    print(mi,mx)
+
     
