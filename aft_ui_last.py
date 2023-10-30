@@ -23,18 +23,18 @@ cap = cv2.VideoCapture("first.avi")
 cap1 = cv2.VideoCapture("sec.avi")
 cap2 = cv2.VideoCapture("bolts.avi")
 #=========================server==========================================
-import socket
+# import socket
 
-server_ip = "192.168.1.181"
-port = 5001
+# server_ip = "192.168.1.181"
+# port = 5001
 
-server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP CONNECTION
+# server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP CONNECTION
 
-server_socket.bind((server_ip, port))
+# server_socket.bind((server_ip, port))
 
-server_socket.listen()
+# server_socket.listen()
 
-client_socket, client_address = server_socket.accept()
+# client_socket, client_address = server_socket.accept()
 
 
 
@@ -488,10 +488,10 @@ def pin_detection_ui(image_path, pin_frame, raw_frame):
 def check_components():
     global client_socket
     while True:
-        recieved_data = client_socket.recv(1024).decode()
-        print("Recieved Data : ",recieved_data)
-        trigger=recieved_data.replace("}","").replace("{",'').split(":")[-1]
-    
+        # recieved_data = client_socket.recv(1024).decode()
+        # print("Recieved Data : ",recieved_data)
+        # trigger=recieved_data.replace("}","").replace("{",'').split(":")[-1]
+        trigger='1'
         if eval(trigger)==1:
             # reset the UI and update counter
             ##
@@ -508,7 +508,8 @@ def check_components():
                 # first cam:
 
                 try:
-                    topCamera,downCamera,sideCamera=checkcamera(no=3)
+                    topCamera,downCamera=checkcamera(no=2)
+                    sideCamera=downCamera
                     # print(topCamera, sideCamera, downCamera)
                     if topCamera is None:
                         work.config(text="Camera3 is not working")
@@ -651,13 +652,13 @@ def check_components():
                 Moving = 2
 
             # Send data to remote
-            SIGNAL_DICT = {"VI_20_BOLT_CHECK": Bolt,
-                           "VI_ISOLATING_PLATE_CHECK": Isolated,
-                           "VI_PIN_CHECK": Pin,
-                           "VI_CAM_PLALE_CHECK": Camplate,
-                           "VI_RETURNING_PLATE_CHECK": Moving,
-                           "VI_FLATE_WASHER_CHECK": Spherical}
-            client_socket.sendall(str(SIGNAL_DICT).encode())
+            # SIGNAL_DICT = {"VI_20_BOLT_CHECK": Bolt,
+            #                "VI_ISOLATING_PLATE_CHECK": Isolated,
+            #                "VI_PIN_CHECK": Pin,
+            #                "VI_CAM_PLALE_CHECK": Camplate,
+            #                "VI_RETURNING_PLATE_CHECK": Moving,
+            #                "VI_FLATE_WASHER_CHECK": Spherical}
+            # client_socket.sendall(str(SIGNAL_DICT).encode())
         else:
             # No trigger
             pass
