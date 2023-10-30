@@ -23,18 +23,18 @@ cap = cv2.VideoCapture("first.avi")
 cap1 = cv2.VideoCapture("sec.avi")
 cap2 = cv2.VideoCapture("bolts.avi")
 #=========================server==========================================
-# import socket
+import socket
 
-# server_ip = "192.168.1.181"
-# port = 5001
+server_ip = "192.168.1.181"
+port = 5001
 
-# server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP CONNECTION
+server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP CONNECTION
 
-# server_socket.bind((server_ip, port))
+server_socket.bind((server_ip, port))
 
-# server_socket.listen()
+server_socket.listen()
 
-# client_socket, client_address = server_socket.accept()
+client_socket, client_address = server_socket.accept()
 
 
 
@@ -486,12 +486,12 @@ def pin_detection_ui(image_path, pin_frame, raw_frame):
 # ------------------------------------------------------- Connectivity ----------------------------------------------
 
 def check_components():
-    # global client_socket
+    global client_socket
     while True:
-        # recieved_data = client_socket.recv(1024).decode()
-        # print("Recieved Data : ",recieved_data)
-        # trigger=recieved_data.replace("}","").replace("{",'').split(":")[-1]
-        trigger=1
+        recieved_data = client_socket.recv(1024).decode()
+        print("Recieved Data : ",recieved_data)
+        trigger=recieved_data.replace("}","").replace("{",'').split(":")[-1]
+    
         if eval(trigger)==1:
             # reset the UI and update counter
             ##
