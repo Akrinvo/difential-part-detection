@@ -21,10 +21,10 @@ def image_loc(foldername):
 
 def pred_isoplate(image):
     out=0
-    with open('./muvro/isolated.json', 'r') as openfile:
+    with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/isolated.json', 'r') as openfile:
         r= json.load(openfile)
 
-    with open('./muvro/isothrust.json', 'r') as openfile:
+    with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/isothrust.json', 'r') as openfile:
         mi,mx= json.load(openfile)
 
 

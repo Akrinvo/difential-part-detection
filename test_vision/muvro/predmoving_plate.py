@@ -7,10 +7,10 @@ import json
 
 def pred_moving_plate(image):
     out = 0
-    with open('./muvro/movingplate.json', 'r') as openfile:
+    with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/movingplate.json', 'r') as openfile:
         r = json.load(openfile)
 
-    with open('./muvro/movingplatethrust.json', 'r') as openfile:
+    with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/movingplatethrust.json', 'r') as openfile:
         mi, mx = json.load(openfile)
 
     try:

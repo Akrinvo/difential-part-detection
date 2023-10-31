@@ -48,10 +48,10 @@ def image_loc(foldername):
 
 
 def pred_pins(image):
-    with open('./muvro/pinsparam.json', 'r') as openfile:
+    with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/pinsparam.json', 'r') as openfile:
         pinparam = json.load(openfile)
 
-    with open('./muvro/pin.json', 'r') as openfile:
+    with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/pin.json', 'r') as openfile:
         pin = json.load(openfile)
     out = 0
 

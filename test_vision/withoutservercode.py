@@ -1,3 +1,4 @@
+
 import cv2
 import os
 import json
@@ -142,7 +143,7 @@ def cam_plate_detection_ui(image_path, cam_plate_frame, raw_frame):
 
         im, out = pred_camplate(img.copy())
 
-        filename = f"muvro/result/cam_plate.jpg"
+        filename = f"/home/aspagteq/Documents/after_assembly/test_vision/muvro/result/cam_plate.jpg"
         cv2.imwrite(filename, img)
 
         img_tk = load_image(filename, 150, 150)
@@ -194,7 +195,7 @@ def moving_plate_detection_ui(frame, moving_plate_frame, raw_frame):
 
         im, out = pred_moving_plate(img.copy())
 
-        filename = f"muvro/result/moving_plate.jpg"
+        filename = f"/home/aspagteq/Documents/after_assembly/test_vision/muvro/result/moving_plate.jpg"
         cv2.imwrite(filename, img)
 
         img_tk = load_image(filename, 150, 150)
@@ -252,7 +253,7 @@ def isolated_washer_detection_ui(image_path, isolated_washer_frame, raw_frame):
 
         im, out = pred_isoplate(img.copy())
 
-        filename = f"muvro/result/isolated_plate.jpg"
+        filename = f"/home/aspagteq/Documents/after_assembly/test_vision/muvro/result/isolated_plate.jpg"
         cv2.imwrite(filename, img)
 
         img_tk = load_image(filename, 150, 150)
@@ -310,7 +311,7 @@ def spherical_washer_detection_ui(image, spherical_washer_frame, raw_frame):
 
         im, out = pred_spherical1(img.copy())
 
-        filename = f"muvro/result/spherical_washer.jpg"
+        filename = f"/home/aspagteq/Documents/after_assembly/test_vision/muvro/result/spherical_washer.jpg"
         cv2.imwrite(filename, img)
 
         img_tk = load_image(filename, 150, 150)
@@ -369,7 +370,7 @@ def bolts_detection_ui(image_path, bolt_frame, raw_frame):
 
         im, out = pred_bolts(img.copy())
 
-        filename = f"muvro/result/bolts.jpg"
+        filename = f"/home/aspagteq/Documents/after_assembly/test_vision/muvro/result/bolts.jpg"
         cv2.imwrite(filename, img)
 
         img_tk = load_image(filename, 150, 150)
@@ -423,7 +424,7 @@ def pin_detection_ui(image_path, pin_frame, raw_frame):
 
         im, out = pred_pins(img.copy())
 
-        filename = f"muvro/result/dpin.jpg"
+        filename = f"/home/aspagteq/Documents/after_assembly/test_vision/muvro/result/dpin.jpg"
         cv2.imwrite(filename, img)
 
         img_tk = load_image(filename, 150, 150)
@@ -476,7 +477,7 @@ def check_components():
         # recieved_data = client_socket.recv(1024).decode()
         # print("Recieved Data : ",recieved_data)
         # trigger=recieved_data.replace("}","").replace("{",'').split(":")[-1]
-        trigger = input("enter 1")
+        trigger = "1"
         if eval(trigger) == 1:
             # reset the UI and update counter
             ##
@@ -498,21 +499,21 @@ def check_components():
                     # print(topCamera, sideCamera, downCamera)
                     if topCamera is None:
                         work.config(text="Camera3 is not working")
-                        icon_img = cv2.imread("images/logo.jpg")
+                        icon_img = cv2.imread("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/logo.jpg")
                         topCamera, sideCamera, downCamera = icon_img, icon_img, icon_img
                     elif sideCamera is None:
                         work.config(text="Camera3 is not working")
-                        icon_img = cv2.imread("images/logo.jpg")
+                        icon_img = cv2.imread("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/logo.jpg")
                         topCamera, sideCamera, downCamera = icon_img, icon_img, icon_img
                     elif downCamera is None:
                         work.config(text="Camera3 is not working")
-                        icon_img = cv2.imread("images/logo.jpg")
+                        icon_img = cv2.imread("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/logo.jpg")
                         topCamera, sideCamera, downCamera = icon_img, icon_img, icon_img
 
                 except Exception as e:
                     print(e)
                     work.config(text="Camera3 is not working")
-                    icon_img = cv2.imread("images/logo.jpg")
+                    icon_img = cv2.imread("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/logo.jpg")
                     topCamera, sideCamera, downCamera = icon_img, icon_img, icon_img
 
                 cam_plate_detection_ui(
@@ -609,7 +610,7 @@ root.rowconfigure(0, weight=1)
 heading = Label(root, text="After Assembly", font=("times new roman", 30, "bold"), bg=bg_color,
                 fg="black", relief=GROOVE)
 
-image_tk = load_image("muvro/images/logo.jpeg", 100, 50)
+image_tk = load_image("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/logo.jpeg", 100, 50)
 image_label2 = Label(heading, image=image_tk)
 # Store a reference to the image to prevent garbage collection
 image_label2.image = image_tk
@@ -654,7 +655,7 @@ raw_cam_plate_frame = LabelFrame(main_frame1, text="Raw Cam Plate", font=(
 raw_cam_plate_frame.grid(row=1, column=0, padx=5, pady=5)
 
 # raw cam plate image frontend
-image_tk1 = load_image("muvro/images/cam_plate.jpg", 150, 150)
+image_tk1 = load_image("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/cam_plate.jpg", 150, 150)
 raw_cam_img_lbl = Label(raw_cam_plate_frame, image=image_tk1)
 # Store a reference to the image to prevent garbage collection
 raw_cam_img_lbl.image = image_tk1
@@ -666,7 +667,7 @@ raw_moving_plate_frame = LabelFrame(main_frame1, text="Raw Pin Returning Plate",
 raw_moving_plate_frame.grid(row=1, column=1, padx=5, pady=5)
 
 # raw Pin Returning Plate image frontend
-image_tk1 = load_image("muvro/images/cam_plate.jpg", 150, 150)
+image_tk1 = load_image("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/cam_plate.jpg", 150, 150)
 raw_moving_img_lbl = Label(raw_moving_plate_frame, image=image_tk1)
 # Store a reference to the image to prevent garbage collection
 raw_moving_img_lbl.image = image_tk1
@@ -678,7 +679,7 @@ raw_isolated_washer_frame = LabelFrame(main_frame1, font=(
 raw_isolated_washer_frame.grid(row=1, column=2, padx=5, pady=5)
 
 # raw isolated washer image frontend
-image_tk6 = load_image("muvro/images/spherical_washer.jpg", 150, 150)
+image_tk6 = load_image("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/spherical_washer.jpg", 150, 150)
 raw_isolated_img_lbl = Label(raw_isolated_washer_frame, image=image_tk6)
 # Store a reference to the image to prevent garbage collection
 raw_isolated_img_lbl.image = image_tk6
@@ -690,7 +691,7 @@ raw_spherical_washer_frame = LabelFrame(main_frame1, font=(
 raw_spherical_washer_frame.grid(row=1, column=3, padx=5, pady=5)
 
 # raw spherical washer image frontend
-image_tk6 = load_image("muvro/images/spherical_washer.jpg", 150, 150)
+image_tk6 = load_image("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/spherical_washer.jpg", 150, 150)
 raw_sph_img_lbl = Label(raw_spherical_washer_frame, image=image_tk6)
 # Store a reference to the image to prevent garbage collection
 raw_sph_img_lbl.image = image_tk6
@@ -702,7 +703,7 @@ raw_bolts_frame = LabelFrame(main_frame1, font=(
 raw_bolts_frame.grid(row=1, column=4, padx=5, pady=5, sticky="WENS")
 
 # raw bolts image frontend
-image_tk7 = load_image("muvro/images/bolts.jpeg", 150, 150)
+image_tk7 = load_image("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/bolts.jpeg", 150, 150)
 raw_bolt_img_lbl = Label(raw_bolts_frame, image=image_tk7)
 raw_bolt_img_lbl.image = image_tk7
 raw_bolt_img_lbl.pack()
@@ -713,7 +714,7 @@ raw_D_shape_frame = LabelFrame(main_frame1, text="Pin", font=(
 raw_D_shape_frame.grid(row=1, column=5, padx=5, pady=5, sticky="WENS")
 
 # raw D shape orientation image frontend
-image_tk8 = load_image("muvro/images/spring.jpg", 150, 150)
+image_tk8 = load_image("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/spring.jpg", 150, 150)
 raw_d_img_lbl = Label(raw_D_shape_frame, image=image_tk8)
 raw_d_img_lbl.image = image_tk8
 raw_d_img_lbl.pack()
@@ -756,7 +757,7 @@ cam_plate_frame = LabelFrame(main_frame, text="Cam Plate", font=(
 cam_plate_frame.grid(row=0, column=0, padx=5, pady=5)
 
 # moving plate image frontend
-image_tk1 = load_image("muvro/images/cam_plate.jpg", 130, 130)
+image_tk1 = load_image("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/cam_plate.jpg", 130, 130)
 cam_img_lbl = Label(cam_plate_frame, image=image_tk1)
 # Store a reference to the image to prevent garbage collection
 cam_img_lbl.image = image_tk1
@@ -773,7 +774,7 @@ moving_plate_frame = LabelFrame(main_frame, text="Pin Returning Plate", font=(
 moving_plate_frame.grid(row=0, column=2, padx=5, pady=5)
 
 # moving plate image frontend
-image_tk1 = load_image("muvro/images/cam_plate.jpg", 130, 130)
+image_tk1 = load_image("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/cam_plate.jpg", 130, 130)
 moving_img_lbl = Label(moving_plate_frame, image=image_tk1)
 # Store a reference to the image to prevent garbage collection
 moving_img_lbl.image = image_tk1
@@ -791,7 +792,7 @@ isolated_washer_frame = LabelFrame(main_frame, font=(
 isolated_washer_frame.grid(row=0, column=4, padx=5, pady=5)
 
 # spherical washer image frontend
-image_tk6 = load_image("muvro/images/spherical_washer.jpg", 130, 130)
+image_tk6 = load_image("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/spherical_washer.jpg", 130, 130)
 isolated_img_lbl = Label(isolated_washer_frame, image=image_tk6)
 # Store a reference to the image to prevent garbage collection
 isolated_img_lbl.image = image_tk6
@@ -809,7 +810,7 @@ spherical_washer_frame = LabelFrame(main_frame, font=(
 spherical_washer_frame.grid(row=0, column=6, padx=5, pady=5)
 
 # spherical washer image frontend
-image_tk6 = load_image("muvro/images/spherical_washer.jpg", 130, 130)
+image_tk6 = load_image("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/spherical_washer.jpg", 130, 130)
 sph_img_lbl = Label(spherical_washer_frame, image=image_tk6)
 # Store a reference to the image to prevent garbage collection
 sph_img_lbl.image = image_tk6
@@ -826,7 +827,7 @@ bolts_frame = LabelFrame(main_frame, font=(
 bolts_frame.grid(row=0, column=8, padx=5, pady=5)
 
 # bolts image frontend
-image_tk7 = load_image("muvro/images/bolts.jpeg", 130, 130)
+image_tk7 = load_image("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/bolts.jpeg", 130, 130)
 bolt_img_lbl = Label(bolts_frame, image=image_tk7)
 bolt_img_lbl.image = image_tk7
 bolt_img_lbl.pack()
@@ -843,7 +844,7 @@ D_shape_frame = LabelFrame(main_frame, text="Pin", font=(
 D_shape_frame.grid(row=0, column=10, padx=5, pady=5)
 
 # D shape orientation image frontend
-image_tk8 = load_image("muvro/images/bolts.jpeg", 130, 130)
+image_tk8 = load_image("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/bolts.jpeg", 130, 130)
 d_img_lbl = Label(D_shape_frame, image=image_tk8)
 d_img_lbl.image = image_tk8
 d_img_lbl.pack()

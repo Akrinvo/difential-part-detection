@@ -18,10 +18,10 @@ def image_loc(foldername):
 
 
 def pred_camplate(image):
-    with open('./muvro/camplate.json', 'r') as openfile:
+    with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/camplate.json', 'r') as openfile:
         r= json.load(openfile)
 
-    with open('./muvro/camplatethrust.json', 'r') as openfile:
+    with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/camplatethrust.json', 'r') as openfile:
         mi,mx= json.load(openfile)
     
     out=0

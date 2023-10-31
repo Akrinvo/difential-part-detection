@@ -1,5 +1,9 @@
 import cv2
-from pypylon import pylon
+import os
+try:from pypylon import pylon
+except:
+    os.system("pip3 install pypylon")
+    from pypylon import pylon
 
 
 

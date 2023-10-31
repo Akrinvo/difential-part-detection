@@ -19,10 +19,10 @@ def image_loc(foldername):
 
 def pred_spherical1(image):
     out=0
-    with open('./muvro/spherical.json', 'r') as openfile:
+    with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/spherical.json', 'r') as openfile:
         r= json.load(openfile)
 
-    with open('./muvro/sphericalthrust.json', 'r') as openfile:
+    with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/sphericalthrust.json', 'r') as openfile:
         mi,mx= json.load(openfile)
 
   

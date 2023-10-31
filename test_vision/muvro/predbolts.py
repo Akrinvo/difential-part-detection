@@ -6,9 +6,9 @@ import json
 
 
 
-with open('./muvro/bolts.json', 'r') as openfile:
+with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/bolts.json', 'r') as openfile:
     bolt= json.load(openfile)
-with open('./muvro/boltsparam.json', 'r') as openfile:
+with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/boltsparam.json', 'r') as openfile:
     param= json.load(openfile)
 
 
