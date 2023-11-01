@@ -473,6 +473,8 @@ def pin_detection_ui(image_path, pin_frame, raw_frame):
 def check_components():
     global client_socket
     while True:
+        print("start")
+
         recieved_data = client_socket.recv(1024).decode()
         print("Recieved Data : ",recieved_data)
         trigger=recieved_data.replace("}","").replace("{",'').split(":")[-1]
