@@ -82,8 +82,8 @@ def pred_pins(image):
 
         pin_black = np.count_nonzero(roi == 255)
 
-        if pinparam[f"min{j}"] > pin_black:
-            # print(pinparam[f"min{j}"],pin_black)
+        if (pinparam[f"min{j}"] - pin_black)>450:
+            print(j,pinparam[f"min{j}"],pin_black)
             count += 1
             img1 = cv2.rectangle(
                 img1, (r[0], r[1]), (r[0]+r[2], r[1]+r[3]), (0, 0, 255), 3)
@@ -102,8 +102,8 @@ def pred_pins(image):
     if count > 0:
         img1 = cv2.putText(img1, "NG", (20, 50),
                            cv2.FONT_HERSHEY_COMPLEX, 2, (0, 0, 255), 2)
-        img1 = cv2.rectangle(img1, (r[0], r[1]),
-                             (r[0]+r[2], r[1]+r[3]), (0, 0, 255), 3)
+        # img1 = cv2.rectangle(img1, (r[0], r[1]),
+        #                      (r[0]+r[2], r[1]+r[3]), (0, 0, 255), 3)
         overlay = np.zeros_like(img1)
         overlay[:] = (0, 0, 255)
     else:
@@ -117,6 +117,7 @@ def pred_pins(image):
     roiss = vconcat_resize(rois)
     roiss = cv2.resize(roiss, (150, 600))
     img1 = cv2.addWeighted(img, 1, overlay, 0.5, 0)
+    # cv2.imshow("roiss",roiss)
     return img1, out
 
 

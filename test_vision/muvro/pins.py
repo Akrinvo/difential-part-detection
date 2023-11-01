@@ -55,7 +55,7 @@ good=image_loc("muvro/sona_data")
 # # good=image_loc("sona_data/wbolt_wpin")
 
 
-pin=[[380, 170, 12, 8], [398, 238, 9, 10], [275, 265, 12, 10], [260, 197, 10, 11]]
+pin=[[263, 214, 13, 12], [374, 164, 15, 12], [404, 226, 13, 13], [292, 276, 13, 13]]
 
 
 
@@ -124,17 +124,19 @@ cv2.destroyAllWindows()
 
 
 
-pin=json.dumps(pin)
-with open("muvro/pin.json", "w") as dic:
-    dic.write(pin)
+# pin=json.dumps(pin)s
+# with open("muvro/pin.json", "w") as dic:
+#     dic.write(pin)
 
-pins=json.dumps(pins)
-with open("muvro/pinsparam.json", "w") as dic:
-    dic.write(pins)
-
-
+# pins=json.dumps(pins)
+# with open("muvro/pinsparam.json", "w") as dic:
+#     dic.write(pins)
 
 
+
+# {'min1': 2075, 'max1': 2766, 'min2': 3003,
+#  'max2': 3721, 'min3': 3402, 'max3': 3721, 
+# 'min4': 2464, 'max4': 3721}
 
 
 

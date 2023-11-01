@@ -6,7 +6,44 @@ import json
 from cam import camera_streams
 cap = camera_streams(mode="Industrial")
 
+def detectCircle(img, radius=30, minDist=200,
+                 param1=50,
+                 param2=70,
+                 minRadius=10,
+                 ):
+    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
+    # blurred = cv2.medianBlur(gray, 5)  #
+    gray=cv2.bilateralFilter(gray,10,50,50)#
+    cv2.imshow("blr",gray)
+    minDist = minDist
+    param1 = param1
+    param2 = param2
+    minRadius = minRadius
+    maxRadius = radius
+
+    # docstring of HoughCircles: HoughCircles(image, method, dp, minDist[, circles[, param1[, param2[, minRadius[, maxRadius]]]]]) -> circles
+    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, minDist,
+                               param1=param1, param2=param2, minRadius=minRadius, maxRadius=maxRadius)
+    Max = 0
+    center = []
+    if circles is not None:
+        circles = np.uint16(np.around(circles))
+        for i in circles[0, :]:
+            if Max < i[2]:
+                Max = i[2]
+                center = i
+                cv2.circle(img, (center[0], center[1]), center[2]+67, (255,255, 255), -1)
+
+                # cv2.circle(img, (center[0], center[1]), center[2], (0, 255, 0), 2)
+                # cv2.namedWindow("multi_img", cv2.WINDOW_NORMAL)
+                # cv2.imshow('multi_img',img)
+#                     cv2.waitKey(0)
+#                     cv2.destroyAllWindows()
+        return img,1
+    else:
+        return img,0
+    
 def hconcat_resize(img_list,
                    interpolation=cv2.INTER_CUBIC):
     # take minimum hights
@@ -69,14 +106,19 @@ while (1):
 
     img1 = cap.get_frame((680, 500))
 
-    img = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
-    img = cv2.medianBlur(img, 3)
+    # img = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
  
-    img2 = img.copy()
+    # img2 = img.copy()
 
     rois = []
 
+    img2,_=detectCircle(img1.copy())
+    if _==0:
+        print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+    img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+
     thresh = cv2.threshold(img2, 80, 255, cv2.THRESH_BINARY)[1]
+
     # thresh=cv2.adaptiveThreshold(img,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
     #                              cv2.THRESH_BINARY,13,15)
     # thresh=cv2.dilate(thresh1,(3,3),iterations=2)

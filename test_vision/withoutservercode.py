@@ -494,8 +494,7 @@ def check_components():
                 # first cam:
 
                 try:
-                    topCamera, downCamera = checkcamera(no=2)
-                    sideCamera=downCamera
+                    topCamera, downCamera,sideCamera= checkcamera(no=3)
                     # print(topCamera, sideCamera, downCamera)
                     if topCamera is None:
                         work.config(text="Camera3 is not working")
@@ -601,7 +600,7 @@ def check_components():
 
 bg_color = "mint cream"
 root.title("Interface")
-root.geometry("1295x700+0+0")
+root.geometry("1355x750+0+0")
 root.columnconfigure(0, weight=1)
 root.rowconfigure(0, weight=1)
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------
