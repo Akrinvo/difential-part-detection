@@ -5,16 +5,14 @@ import json
 
 
 
-with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/bolts.json', 'r') as openfile:
-    bolt= json.load(openfile)
-with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/boltsparam.json', 'r') as openfile:
-    param= json.load(openfile)
 
+prev_circle=[339 ,223 , 27 ]
 def detectCircle(img, radius=30, minDist=200,
-                 param1=50,
-                 param2=70,
+                 param1=60,
+                 param2=80,
                  minRadius=10,
                  ):
+    global prev_circle
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # blurred = cv2.medianBlur(gray, 5)  #
@@ -37,16 +35,19 @@ def detectCircle(img, radius=30, minDist=200,
             if Max < i[2]:
                 Max = i[2]
                 center = i
-                cv2.circle(img, (center[0], center[1]), center[2]+67, (255,255, 255), -1)
-
-                cv2.circle(img, (center[0], center[1]), center[2], (0, 255, 0), 2)
-                # cv2.namedWindow("multi_img", cv2.WINDOW_NORMAL)
-                # cv2.imshow('multi_img',img)
+                prev_circle=center
+                
 #                     cv2.waitKey(0)
 #                     cv2.destroyAllWindows()
-        return img,1
-    else:
-        return img,0
+    cv2.circle(img, (prev_circle[0], prev_circle[1]), prev_circle[2]+68, (255,255, 255), -1)
+
+    cv2.circle(img, (prev_circle[0], prev_circle[1]), prev_circle[2], (0, 255, 0), 2)
+    # cv2.namedWindow("multi_img", cv2.WINDOW_NORMAL)
+    # cv2.imshow('multi_img',img)
+    return img,1
+
+    # else:
+    #     return img,0
 
 
 def hconcat_resize(img_list, 
@@ -94,11 +95,15 @@ def image_loc(foldername):
 
 
 
-
+bolts_flag=0
 
 def pred_bolts(image):
     out=0
-    global bolt,param
+    with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/bolts.json', 'r') as openfile:
+        bolt= json.load(openfile)
+    with open('/home/aspagteq/Documents/after_assembly/test_vision/muvro/boltsparam.json', 'r') as openfile:
+        param= json.load(openfile)
+    global bolts_flag
     try:    img=cv2.imread(image)
     except:img=image
     # img=cv2.resize(img,(680,500))
@@ -110,8 +115,7 @@ def pred_bolts(image):
     # thresh=cv2.threshold(grey1,80,255,cv2.THRESH_BINARY)[1]
 
     img2,_=detectCircle(img.copy())
-    if _==0:
-        print("3777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777777")
+    
     img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
 
     thresh = cv2.threshold(img2, 80, 255, cv2.THRESH_BINARY)[1]   
@@ -120,6 +124,8 @@ def pred_bolts(image):
 
     rois=[]
     count=0
+   
+      
     for r,j in zip(bolt,range(1,21)):
         img=cv2.rectangle(img,(r[0],r[1]),(r[0]+r[2],r[1]+r[3]),255,1)
         roi = thresh[int(r[1]):int(r[1]+r[3]), 
@@ -129,12 +135,12 @@ def pred_bolts(image):
         roi = cv2.Canny(bl,120,189)
         n_black=np.count_nonzero(roi == 255)
 
-        if (param[f"min{j}"]-15>n_black)  :
+        if (param[f"min{j}"]-28>n_black)  :
             count+=1
             img=cv2.rectangle(img,(r[0],r[1]),(r[0]+r[2],r[1]+r[3]),(0,0,255),3)
             overlay = np.zeros_like(img)
             overlay[:] = (0, 0,255)
-            # print("max ",param[f"max{j}"],f"no {j} bolt ",n_black," diff =",abs(param[f"max{j}"]-n_black))
+            # print("min ",param[f"min{j}"],f"no {j} bolt ",n_black," diff =",abs(param[f"min{j}"]-n_black))
         else:
             img=cv2.rectangle(img,(r[0],r[1]),(r[0]+r[2],r[1]+r[3]),255,2)
             # if j==4 or j==5:
@@ -156,7 +162,6 @@ def pred_bolts(image):
     roiss=cv2.resize(roiss,(400,400))
     img = cv2.addWeighted(img, 1, overlay, 0.5, 0)
     # cv2.imshow("roiss",roiss)
-
     return img,out
 
 
@@ -168,12 +173,15 @@ if __name__=="__main__":
     while True:
         frame=cap.get_frame((680,500))
         img, out=pred_bolts(frame)
+        # if bolts_flag==2:
+
         cv2.imshow("img",img)
         cv2.imshow("fram",frame)
+            # bolts_flag=0
 
         if cv2.waitKey(2)==ord('q'):break
     cv2.destroyAllWindows()
-    print(param)
+  
 
 
 

@@ -55,7 +55,7 @@ good=image_loc("muvro/sona_data")
 # # good=image_loc("sona_data/wbolt_wpin")
 
 
-pin=[[263, 214, 13, 12], [374, 164, 15, 12], [404, 226, 13, 13], [292, 276, 13, 13]]
+pin=[[377-4, 165-5, 15, 13], [406-2, 228-5, 14, 13], [296-3, 278-5, 14, 12], [264-2, 215-5, 16, 13]]
 
 
 
@@ -68,7 +68,9 @@ while(1):
     img1=cap.get_frame((680,500))
     shv=cv2.cvtColor(img1,cv2.COLOR_BGR2HSV)
     img=cv2.cvtColor(img1,cv2.COLOR_BGR2GRAY)
-    
+    img[img<110]=0
+    img[img>210]=0
+    # img[img>0]=255
     
    
     rois=[]
@@ -97,9 +99,8 @@ while(1):
                     int(r[0]):int(r[0]+r[2])]
 
             roi=cv2.resize(roi,(61,61))
-            edge=cv2.Canny(roi,170,200)
-            # pin_black=61*61-np.count_nonzero(roi == 255)
-            pin_black=np.count_nonzero(roi == 255)
+            pin_black=61*61-np.count_nonzero(roi == 255)
+            # pin_black=np.count_nonzero(roi == 255)
             
             if len(pins)<8:
                 pins[f"min{j}"]=pin_black
@@ -124,7 +125,7 @@ cv2.destroyAllWindows()
 
 
 
-# pin=json.dumps(pin)s
+# pin=json.dumps(pin)
 # with open("muvro/pin.json", "w") as dic:
 #     dic.write(pin)
 
@@ -133,10 +134,6 @@ cv2.destroyAllWindows()
 #     dic.write(pins)
 
 
-
-# {'min1': 2075, 'max1': 2766, 'min2': 3003,
-#  'max2': 3721, 'min3': 3402, 'max3': 3721, 
-# 'min4': 2464, 'max4': 3721}
 
 
 

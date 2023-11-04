@@ -13,7 +13,7 @@ from muvro.predmoving_plate import *
 from muvro.pred_isoplate import *
 from muvro.predbolts import *
 from muvro.pred_spherical1 import *
-from muvro.predpin import *
+from muvro.predpin import pred_pins
 
 from tkinter import messagebox
 from muvro.camera import checkcamera
@@ -24,19 +24,22 @@ cap = cv2.VideoCapture("first.avi")
 cap1 = cv2.VideoCapture("sec.avi")
 cap2 = cv2.VideoCapture("bolts.avi")
 # =========================server==========================================
-# import socket
+import socket
+# read_sig={"VI_CAMERA_READY":1}
 
 # server_ip = "192.168.1.181"
 # port = 5001
-
+# # while True:
+# # try:
 # server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP CONNECTION
-
+# print("1")
 # server_socket.bind((server_ip, port))
-
+# print("2")
 # server_socket.listen()
+# print("3")
 
 # client_socket, client_address = server_socket.accept()
-
+# print("start")
 
 # ===================================================================
 
@@ -422,7 +425,7 @@ def pin_detection_ui(image_path, pin_frame, raw_frame):
     try:
         img = image_path
 
-        im, out = pred_pins(img.copy())
+        im, pin_detect = pred_pins(img.copy())
 
         filename = f"/home/aspagteq/Documents/after_assembly/test_vision/muvro/result/dpin.jpg"
         cv2.imwrite(filename, img)
@@ -443,9 +446,9 @@ def pin_detection_ui(image_path, pin_frame, raw_frame):
         raw_d_img_lbl.image = img_tk1
         raw_d_img_lbl.pack()
 
-        if out == 0:
+        if pin_detect == 0:
             pin_frame.configure(bg="red")
-            time.sleep(0.15)
+            # time.sleep(0.15)
 
             # work.config(text="Pin detecting....", bg="red")
             shape_n += 1
@@ -454,7 +457,7 @@ def pin_detection_ui(image_path, pin_frame, raw_frame):
             # work.config(text="All detection Completed....", bg="green")
             shape_y += 1
             sub_counter += 1
-            time.sleep(0.15)
+            # time.sleep(0.15)
 
             terminate5 = True
         if sub_counter == 4:
@@ -472,128 +475,216 @@ def pin_detection_ui(image_path, pin_frame, raw_frame):
 
 
 def check_components():
-    global client_socket
+    global client_socket,pi
+    read_sig={"VI_CAMERA_READY":1}
+
+    server_ip = "192.168.1.181"
+    port = 5001
     while True:
-        # recieved_data = client_socket.recv(1024).decode()
-        # print("Recieved Data : ",recieved_data)
-        # trigger=recieved_data.replace("}","").replace("{",'').split(":")[-1]
-        trigger = "1"
-        if eval(trigger) == 1:
-            # reset the UI and update counter
-            ##
-            isolated_washer_frame.configure(bg="white")
-            spherical_washer_frame.configure(bg="white")
-            cam_plate_frame.configure(bg="white")
-            bolts_frame.configure(bg="white")
-            moving_plate_frame.configure(bg="white")
-            D_shape_frame.configure(bg="white")
-            ##
+        try:
+            server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP CONNECTION
+            # print("1")
+            server_socket.bind((server_ip, port))
+            # print("2")
+            server_socket.listen()
+            # print("3")
 
-            for loop in range(3):
+            client_socket, client_address = server_socket.accept()
+            print("start")
 
-                # first cam:
-
-                try:
-                    topCamera, downCamera,sideCamera= checkcamera(no=3)
-                    # print(topCamera, sideCamera, downCamera)
-                    if topCamera is None:
-                        work.config(text="Camera3 is not working")
-                        icon_img = cv2.imread("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/logo.jpg")
-                        topCamera, sideCamera, downCamera = icon_img, icon_img, icon_img
-                    elif sideCamera is None:
-                        work.config(text="Camera3 is not working")
-                        icon_img = cv2.imread("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/logo.jpg")
-                        topCamera, sideCamera, downCamera = icon_img, icon_img, icon_img
-                    elif downCamera is None:
-                        work.config(text="Camera3 is not working")
-                        icon_img = cv2.imread("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/logo.jpg")
-                        topCamera, sideCamera, downCamera = icon_img, icon_img, icon_img
-
-                except Exception as e:
-                    print(e)
-                    work.config(text="Camera3 is not working")
-                    icon_img = cv2.imread("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/logo.jpg")
-                    topCamera, sideCamera, downCamera = icon_img, icon_img, icon_img
-
-                cam_plate_detection_ui(
-                    downCamera, cam_plate_frame, raw_cam_plate_frame)
-                moving_plate_detection_ui(
-                    downCamera, moving_plate_frame, raw_moving_plate_frame)
-
-            # second cam:
-
-                isolated_washer_detection_ui(
-                    sideCamera, isolated_washer_frame, raw_isolated_washer_frame)
-                spherical_washer_detection_ui(
-                    sideCamera, spherical_washer_frame, raw_spherical_washer_frame)
-
-            # Third cam:
-
-                bolts_detection_ui(topCamera, bolts_frame, raw_bolts_frame)
-                pin_detection_ui(topCamera, D_shape_frame, raw_D_shape_frame)
-
-                # give signal to port depending on sub - counter
-                if sub_counter == NO_OF_COMPONENTS:
-                    # signal is 1 (good)
-                    pass
-                else:
-                    # signal is 0 (bad)
-                    pass
-            global shape_y, spherical_yes, bolt_yes, isolated_yes, cam_plate_yes, moving_plate_yes
-
-            if shape_y > 1:
-                Pin = 1
-                shape_y = 0
-            else:
-                shape_y = 0
-                Pin = 2
-
-            if spherical_yes > 1:
-                Spherical = 1
-                spherical_yes = 0
-            else:
-                spherical_yes = 0
-                Spherical = 2
-
-            if bolt_yes > 1:
-                Bolt = 1
-                bolt_yes = 0
-            else:
-                bolt_yes = 0
-                Bolt = 2
-
-            if isolated_yes > 1:
-                Isolated = 1
-                isolated_yes = 0
-            else:
-                isolated_yes = 0
-                Isolated = 2
-
-            if cam_plate_yes > 1:
-                Camplate = 1
-                cam_plate_yes = 0
-            else:
-                cam_plate_yes = 0
-                Camplate = 2
-
-            if moving_plate_yes > 1:
-                Moving = 1
-                moving_plate_yes = 0
-            else:
-                moving_plate_yes = 0
-                Moving = 2
-
-            # Send data to remote
-            # SIGNAL_DICT = {"VI_20_BOLT_CHECK": Bolt,
-            #                "VI_ISOLATING_PLATE_CHECK": Isolated,
-            #                "VI_PIN_CHECK": Pin,
-            #                "VI_CAM_PLALE_CHECK": Camplate,
-            #                "VI_RETURNING_PLATE_CHECK": Moving,
-            #                "VI_FLATE_WASHER_CHECK": Spherical}
-            # client_socket.sendall(str(SIGNAL_DICT).encode())
-        else:
-            # No trigger
+            break
+        except:
+            # print("not")
             pass
+    server_restart=0
+   
+
+    while True:
+        if server_restart==1:
+            
+                try:
+                    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # TCP CONNECTION
+
+                    server_socket.bind((server_ip, port))
+
+                    server_socket.listen()
+
+                    client_socket, client_address = server_socket.accept()
+                    server_restart=0
+                    
+
+                    
+                except:
+                    print("connection not ")
+                    
+                
+        try:
+            
+            client_socket.sendall(str(read_sig).encode())
+            print("send ready")
+            recieved_data = client_socket.recv(1024).decode()
+            print("Recieved Data : ",recieved_data)
+            PD_DETECT=0
+            
+        except:
+            print("not send ready")
+            server_restart=1
+            trigger=0
+            recieved_data=0
+            PD_DETECT=0
+
+        try:
+            trigger=recieved_data.replace("}","").replace("{",'').split(":")[-1]
+        except:
+            print("retry for triger")
+            recieved_data = client_socket.recv(1024).decode()
+            trigger=recieved_data.replace("}","").replace("{",'').split(":")[-1]
+
+        print("trigger",trigger)
+        # trigger = "1"
+        try:
+            if eval(trigger) == 1:
+                # reset the UI and update counter
+                ##
+                trigger=0
+                isolated_washer_frame.configure(bg="white")
+                spherical_washer_frame.configure(bg="white")
+                cam_plate_frame.configure(bg="white")
+                bolts_frame.configure(bg="white")
+                moving_plate_frame.configure(bg="white")
+                D_shape_frame.configure(bg="white")
+                ##
+
+                for loop in range(4):
+
+                    # first cam:
+
+                    try:
+                        topCamera, downCamera,sideCamera= checkcamera(no=3)
+                        # print(topCamera, sideCamera, downCamera)
+                        if topCamera is None:
+                            work.config(text="Camera3 is not working")
+                            icon_img = cv2.imread("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/logo.jpg")
+                            topCamera, sideCamera, downCamera = icon_img, icon_img, icon_img
+                        elif sideCamera is None:
+                            work.config(text="Camera3 is not working")
+                            icon_img = cv2.imread("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/logo.jpg")
+                            topCamera, sideCamera, downCamera = icon_img, icon_img, icon_img
+                        elif downCamera is None:
+                            work.config(text="Camera3 is not working")
+                            icon_img = cv2.imread("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/logo.jpg")
+                            topCamera, sideCamera, downCamera = icon_img, icon_img, icon_img
+
+                    except Exception as e:
+                        print(e)
+                        work.config(text="Camera3 is not working")
+                        icon_img = cv2.imread("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/logo.jpg")
+                        topCamera, sideCamera, downCamera = icon_img, icon_img, icon_img
+
+                    cam_plate_detection_ui(
+                        downCamera, cam_plate_frame, raw_cam_plate_frame)
+                    moving_plate_detection_ui(
+                        downCamera, moving_plate_frame, raw_moving_plate_frame)
+
+                # second cam:
+
+                    isolated_washer_detection_ui(
+                        sideCamera, isolated_washer_frame, raw_isolated_washer_frame)
+                    spherical_washer_detection_ui(
+                        sideCamera, spherical_washer_frame, raw_spherical_washer_frame)
+
+                # Third cam:
+
+                    bolts_detection_ui(topCamera, bolts_frame, raw_bolts_frame)
+                    # pin_detection_ui(topCamera, D_shape_frame, raw_D_shape_frame)
+                    img,Pin_detect=pred_pins(topCamera)
+                    if Pin_detect==1:
+                        D_shape_frame.configure(bg="green")
+                        PD_DETECT+=1
+
+                    # give signal to port depending on sub - counter
+                    if sub_counter == NO_OF_COMPONENTS:
+                        # signal is 1 (good)
+                        pass
+                    else:
+                        # signal is 0 (bad)
+                        pass
+                global shape_y, spherical_yes, bolt_yes, isolated_yes, cam_plate_yes, moving_plate_yes
+
+                if PD_DETECT > 2:
+                    Pin = 1
+                    PD_DETECT = 0
+                else:
+                    PD_DETECTv = 0
+                    Pin = 2
+
+                if spherical_yes > 2:
+                    Spherical = 1
+                    spherical_yes = 0
+                else:
+                    spherical_yes = 0
+                    Spherical = 2
+
+                if bolt_yes > 2:
+                    Bolt = 1
+                    bolt_yes = 0
+                else:
+                    bolt_yes = 0
+                    Bolt = 2
+
+                if isolated_yes > 2:
+                    Isolated = 1
+                    isolated_yes = 0
+                else:
+                    isolated_yes = 0
+                    Isolated = 2
+
+                if cam_plate_yes > 2:
+                    Camplate = 1
+                    cam_plate_yes = 0
+                else:
+                    cam_plate_yes = 0
+                    Camplate = 2
+
+                if moving_plate_yes > 2:
+                    Moving = 1
+                    moving_plate_yes = 0
+                else:
+                    moving_plate_yes = 0
+                    Moving = 2
+
+                # Send data to remote
+                SIGNAL_DICT = {"VI_20_BOLT_CHECK": Bolt,
+                            "VI_ISOLATING_PLATE_CHECK": Isolated,
+                            "VI_PIN_CHECK": Pin,
+                            "VI_CAM_PLATE_CHECK": Camplate,
+                            "VI_RETURNING_PLATE_CHECK": Moving,
+                            "VI_FLAT_WASHER_CHECK": Spherical}
+                print(SIGNAL_DICT)
+                while True:
+                    try:
+                        client_socket.sendall(str(SIGNAL_DICT).encode())
+                        print("send dataa")
+                        trigger=0
+                        recieved_data=0
+                        time.sleep(2)
+                        isolated_washer_frame.configure(bg="white")
+                        spherical_washer_frame.configure(bg="white")
+                        cam_plate_frame.configure(bg="white")
+                        bolts_frame.configure(bg="white")
+                        moving_plate_frame.configure(bg="white")
+                        D_shape_frame.configure(bg="white")
+                        break
+                    except:
+                        print("connection fail")
+                        server_restart=1
+                        recieved_data=0
+                        break
+            else:
+                # No trigger
+                pass
+        except:
+            server_restart=1
 # ===============================================================================================================================================================
 # ===============================================================================================================================================================
 
@@ -941,6 +1032,8 @@ work.grid(row=2, column=3, padx=10, pady=5, sticky="WENS")
 # ================================================================================================================================================================
 
 if __name__ == "__main__":
+    topCamera, downCamera,sideCamera= checkcamera(no=3)
+    img, out = pred_pins(topCamera)
     image_processing_thread_for_moving_plate = threading.Thread(
         target=check_components)
     image_processing_thread_for_moving_plate.start()

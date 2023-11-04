@@ -62,11 +62,24 @@ def pred_pins(image):
 
     shv = cv2.cvtColor(img1, cv2.COLOR_BGR2HSV)
     img = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
+    # cv2.imshow("gra",img)
+    img[img<110]=0
+    img[img>210]=0
+    # r= cv2.selectROI("select the area", img)
+
+    r=(231, 123, 217, 202)
+    brpcheck = img[int(r[1]):int(r[1]+r[3]), 
+                        int(r[0]):int(r[0]+r[2])]
+
+    bpix=np.count_nonzero(brpcheck >1)
+    # print(bpix,brpcheck.shape[0]*brpcheck.shape[1])
+   
+
     rois = []
     count = 0
     thresh = cv2.threshold(img, 80, 255, cv2.THRESH_BINARY)[1]
     g = cv2.cvtColor(shv, cv2.COLOR_BGR2GRAY)
-
+    # cv2.imshow("GRAY",img)
     hsvthresh = cv2.threshold(
         img, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
 
@@ -80,10 +93,35 @@ def pred_pins(image):
 
         roi = cv2.resize(roi, (61, 61))
 
-        pin_black = np.count_nonzero(roi == 255)
+        # pin_black = np.count_nonzero(roi == 255)
+        pin_black=61*61-np.count_nonzero(roi == 255)
+        if bpix<24000 and bpix>19000:
+            if j==1:
+                com_par=pinparam[f"min{j}"]+1500
+            if j==2:
+                com_par=pinparam[f"min{j}"]+720
+            if j==3:
+                com_par=pinparam[f"min{j}"]+400
+            if j==4:
+                com_par=pinparam[f"min{j}"]+1700
+        elif(bpix<19000):
+            if j==1:
+                com_par=pinparam[f"min{j}"]+1600
+            if j==2:
+                com_par=pinparam[f"min{j}"]+520
+            if j==3:
+                com_par=pinparam[f"min{j}"]+900
+            if j==4:
+                com_par=pinparam[f"min{j}"]+1500
+        else:
+            com_par=pinparam[f"min{j}"]
+            
+            
+        # print(j,com_par,pin_black)
 
-        if (pinparam[f"min{j}"] - pin_black)>450:
-            print(j,pinparam[f"min{j}"],pin_black)
+
+        if com_par<pin_black:
+            # print(j,com_par,pin_black)
             count += 1
             img1 = cv2.rectangle(
                 img1, (r[0], r[1]), (r[0]+r[2], r[1]+r[3]), (0, 0, 255), 3)
