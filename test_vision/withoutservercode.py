@@ -562,6 +562,7 @@ def check_components():
                     try:
                         topCamera, downCamera,sideCamera= checkcamera(no=3)
                         # print(topCamera, sideCamera, downCamera)
+
                         if topCamera is None:
                             work.config(text="Camera3 is not working")
                             icon_img = cv2.imread("/home/aspagteq/Documents/after_assembly/test_vision/muvro/images/logo.jpg")
@@ -582,22 +583,22 @@ def check_components():
                         topCamera, sideCamera, downCamera = icon_img, icon_img, icon_img
 
                     cam_plate_detection_ui(
-                        downCamera, cam_plate_frame, raw_cam_plate_frame)
+                        downCamera.copy(), cam_plate_frame, raw_cam_plate_frame)
                     moving_plate_detection_ui(
-                        downCamera, moving_plate_frame, raw_moving_plate_frame)
+                        downCamera.copy(), moving_plate_frame, raw_moving_plate_frame)
 
                 # second cam:
 
                     isolated_washer_detection_ui(
-                        sideCamera, isolated_washer_frame, raw_isolated_washer_frame)
+                        sideCamera.copy(), isolated_washer_frame, raw_isolated_washer_frame)
                     spherical_washer_detection_ui(
-                        sideCamera, spherical_washer_frame, raw_spherical_washer_frame)
+                        sideCamera.copy(), spherical_washer_frame, raw_spherical_washer_frame)
 
                 # Third cam:
 
-                    bolts_detection_ui(topCamera, bolts_frame, raw_bolts_frame)
+                    bolts_detection_ui(topCamera.copy(), bolts_frame, raw_bolts_frame)
                     # pin_detection_ui(topCamera, D_shape_frame, raw_D_shape_frame)
-                    img,Pin_detect=pred_pins(topCamera)
+                    img,Pin_detect=pred_pins(topCamera.copy())
                     if Pin_detect==1:
                         D_shape_frame.configure(bg="green")
                         PD_DETECT+=1
@@ -611,7 +612,7 @@ def check_components():
                         pass
                 global shape_y, spherical_yes, bolt_yes, isolated_yes, cam_plate_yes, moving_plate_yes
 
-                if PD_DETECT > 2:
+                if PD_DETECT > 1:
                     Pin = 1
                     PD_DETECT = 0
                 else:
@@ -625,7 +626,7 @@ def check_components():
                     spherical_yes = 0
                     Spherical = 2
 
-                if bolt_yes > 2:
+                if bolt_yes > 0:
                     Bolt = 1
                     bolt_yes = 0
                 else:
@@ -1032,8 +1033,7 @@ work.grid(row=2, column=3, padx=10, pady=5, sticky="WENS")
 # ================================================================================================================================================================
 
 if __name__ == "__main__":
-    topCamera, downCamera,sideCamera= checkcamera(no=3)
-    img, out = pred_pins(topCamera)
+    os.system("/usr/bin/python3 /home/aspagteq/Documents/after_assembly/test_vision/muvro/predpin.py")
     image_processing_thread_for_moving_plate = threading.Thread(
         target=check_components)
     image_processing_thread_for_moving_plate.start()

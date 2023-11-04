@@ -26,23 +26,26 @@ def pred_moving_plate(image):
     n_white = np.count_nonzero(edge == 255)
     edge = cv2.resize(edge, (400, 400))
     # cv2.imshow("edge",edge)
+    # print(mi,n_white)
 
-    if mi-10 > n_white:
+    if mi > n_white:
         img = cv2.putText(img, "NG", (20, 50),
                           cv2.FONT_HERSHEY_COMPLEX, 2, (0, 0, 255), 2)
         img = cv2.rectangle(img, (r[0], r[1]),
                             (r[0]+r[2], r[1]+r[3]), (0, 0, 255), 3)
         overlay = np.zeros_like(img)
         overlay[:] = (0, 0, 255)
-        print(mi,n_white)
+        # print(mi,n_white)
 
-    elif mx < n_white:
-        img = cv2.putText(img, "NG", (20, 50),
-                          cv2.FONT_HERSHEY_COMPLEX, 2, (0, 0, 255), 2)
-        img = cv2.rectangle(img, (r[0], r[1]),
-                            (r[0]+r[2], r[1]+r[3]), (0, 0, 255), 3)
-        overlay = np.zeros_like(img)
-        overlay[:] = (0, 0, 255)
+    # elif mx+20 < n_white:
+    #     img = cv2.putText(img, "NG", (20, 50),
+    #                       cv2.FONT_HERSHEY_COMPLEX, 2, (0, 0, 255), 2)
+    #     img = cv2.rectangle(img, (r[0], r[1]),
+    #                         (r[0]+r[2], r[1]+r[3]), (0, 0, 255), 3)
+    #     overlay = np.zeros_like(img)
+    #     overlay[:] = (0, 0, 255)
+    #     print(mx,n_white)
+
 
     else:
         img = cv2.putText(img, "OK", (20, 50),

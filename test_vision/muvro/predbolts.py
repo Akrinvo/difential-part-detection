@@ -6,10 +6,10 @@ import json
 
 
 
-prev_circle=[339 ,223 , 27 ]
+prev_circle=[112, 100 , 27]#[339 ,223 , 27 ]
 def detectCircle(img, radius=30, minDist=200,
                  param1=60,
-                 param2=80,
+                 param2=70,
                  minRadius=10,
                  ):
     global prev_circle
@@ -30,6 +30,7 @@ def detectCircle(img, radius=30, minDist=200,
     Max = 0
     center = []
     if circles is not None:
+        # print('ciricle',circles)
         circles = np.uint16(np.around(circles))
         for i in circles[0, :]:
             if Max < i[2]:
@@ -39,9 +40,10 @@ def detectCircle(img, radius=30, minDist=200,
                 
 #                     cv2.waitKey(0)
 #                     cv2.destroyAllWindows()
-    cv2.circle(img, (prev_circle[0], prev_circle[1]), prev_circle[2]+68, (255,255, 255), -1)
+    # print(prev_circle)
+    cv2.circle(img, (prev_circle[0]-1, prev_circle[1]), prev_circle[2]+69, (255,255, 255), -1)
 
-    cv2.circle(img, (prev_circle[0], prev_circle[1]), prev_circle[2], (0, 255, 0), 2)
+    # cv2.circle(img, (prev_circle[0], prev_circle[1]), prev_circle[2], (0, 255, 0), 2)
     # cv2.namedWindow("multi_img", cv2.WINDOW_NORMAL)
     # cv2.imshow('multi_img',img)
     return img,1
@@ -113,10 +115,14 @@ def pred_bolts(image):
     # grey1=grey.copy()
    
     # thresh=cv2.threshold(grey1,80,255,cv2.THRESH_BINARY)[1]
-
-    img2,_=detectCircle(img.copy())
-    
-    img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
+    # r= cv2.selectROI("select the area", img)
+    # print(r)
+    r=(231, 123, 217, 202)
+    roi_circle = img[int(r[1]):int(r[1]+r[3]), 
+                        int(r[0]):int(r[0]+r[2])]
+    img2,_=detectCircle(roi_circle)
+    img[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=img2
+    img2 = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     thresh = cv2.threshold(img2, 80, 255, cv2.THRESH_BINARY)[1]   
     # thresh=cv2.adaptiveThreshold(grey1,255,cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
@@ -130,12 +136,12 @@ def pred_bolts(image):
         img=cv2.rectangle(img,(r[0],r[1]),(r[0]+r[2],r[1]+r[3]),255,1)
         roi = thresh[int(r[1]):int(r[1]+r[3]), 
                       int(r[0]):int(r[0]+r[2])]
-        bl = cv2.medianBlur(roi, 9)
+        bl = cv2.medianBlur(roi, 5)
         # cv2.imshow("blur",bl)
         roi = cv2.Canny(bl,120,189)
         n_black=np.count_nonzero(roi == 255)
-
-        if (param[f"min{j}"]-28>n_black)  :
+        # print(j,param[f"min{j}"],param[f"min{j}"]-5,n_black)
+        if (param[f"min{j}"]-10>n_black)  :
             count+=1
             img=cv2.rectangle(img,(r[0],r[1]),(r[0]+r[2],r[1]+r[3]),(0,0,255),3)
             overlay = np.zeros_like(img)

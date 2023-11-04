@@ -55,12 +55,10 @@ def pred_pins(image):
         pin = json.load(openfile)
     out = 0
 
-    try:
-        img1 = cv2.imread(image)
-    except:
-        img1 = image
+ 
+    img1 = image
 
-    shv = cv2.cvtColor(img1, cv2.COLOR_BGR2HSV)
+    # shv = cv2.cvtColor(img1, cv2.COLOR_BGR2HSV)
     img = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
     # cv2.imshow("gra",img)
     img[img<110]=0
@@ -72,36 +70,36 @@ def pred_pins(image):
                         int(r[0]):int(r[0]+r[2])]
 
     bpix=np.count_nonzero(brpcheck >1)
-    # print(bpix,brpcheck.shape[0]*brpcheck.shape[1])
+    print(bpix,brpcheck.shape[0]*brpcheck.shape[1])
    
 
     rois = []
     count = 0
     thresh = cv2.threshold(img, 80, 255, cv2.THRESH_BINARY)[1]
-    g = cv2.cvtColor(shv, cv2.COLOR_BGR2GRAY)
+    # g = cv2.cvtColor(shv, cv2.COLOR_BGR2GRAY)
     # cv2.imshow("GRAY",img)
     hsvthresh = cv2.threshold(
         img, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)[1]
-
+    
     for r, j in zip(pin, range(1, 5)):
 
         img = cv2.rectangle(img, (r[0], r[1]), (r[0]+r[2], r[1]+r[3]), 255, 1)
         roi = thresh[int(r[1]):int(r[1]+r[3]),
                      int(r[0]):int(r[0]+r[2])]
-        croi = hsvthresh[int(r[1]):int(r[1]+r[3]),
-                         int(r[0]):int(r[0]+r[2])]
+        # croi = hsvthresh[int(r[1]):int(r[1]+r[3]),
+        #                  int(r[0]):int(r[0]+r[2])]
 
         roi = cv2.resize(roi, (61, 61))
 
         # pin_black = np.count_nonzero(roi == 255)
         pin_black=61*61-np.count_nonzero(roi == 255)
-        if bpix<24000 and bpix>19000:
+        if bpix<25000 and bpix>19000:
             if j==1:
                 com_par=pinparam[f"min{j}"]+1500
             if j==2:
                 com_par=pinparam[f"min{j}"]+720
             if j==3:
-                com_par=pinparam[f"min{j}"]+400
+                com_par=pinparam[f"min{j}"]+900
             if j==4:
                 com_par=pinparam[f"min{j}"]+1700
         elif(bpix<19000):
@@ -117,11 +115,11 @@ def pred_pins(image):
             com_par=pinparam[f"min{j}"]
             
             
-        # print(j,com_par,pin_black)
+        print(j,com_par,pin_black)
 
 
         if com_par<pin_black:
-            # print(j,com_par,pin_black)
+            print(j,com_par,pin_black)
             count += 1
             img1 = cv2.rectangle(
                 img1, (r[0], r[1]), (r[0]+r[2], r[1]+r[3]), (0, 0, 255), 3)
@@ -162,11 +160,17 @@ def pred_pins(image):
 if __name__ == "__main__":
     from cam import camera_streams
     cap = camera_streams(mode="Industrial")
-
-    while True:
+    images=image_loc("/home/aspagteq/Documents/after_assembly/test_vision/muvro/sona_data")
+    for i in range(10) :
         frame = cap.get_frame((680, 500))
         img, out = pred_pins(frame)
         cv2.imshow("img", img)
         if cv2.waitKey(2) == ord('q'):
             break
-    cv2.destroyAllWindows()
+    # for frame in images:
+    #     frame=cv2.imread(frame)
+    #     img,out=pred_pins(frame)
+    #     cv2.imshow("img", img)
+    #     if cv2.waitKey(2) == ord('q'):
+    #         break
+    # cv2.destroyAllWindows()

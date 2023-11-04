@@ -5,12 +5,14 @@ import numpy as np
 import json
 from cam import camera_streams
 cap = camera_streams(mode="Industrial")
+prev_circle=[112, 100 , 27]#[339 ,223 , 27 ]
 
 def detectCircle(img, radius=30, minDist=200,
-                 param1=50,
+                 param1=60,
                  param2=70,
                  minRadius=10,
                  ):
+    global prev_circle
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
     # blurred = cv2.medianBlur(gray, 5)  #
@@ -28,21 +30,24 @@ def detectCircle(img, radius=30, minDist=200,
     Max = 0
     center = []
     if circles is not None:
+        print("circle",circles)
         circles = np.uint16(np.around(circles))
         for i in circles[0, :]:
             if Max < i[2]:
                 Max = i[2]
-                center = i
-                cv2.circle(img, (center[0], center[1]), center[2]+67, (255,255, 255), -1)
-
-                # cv2.circle(img, (center[0], center[1]), center[2], (0, 255, 0), 2)
-                # cv2.namedWindow("multi_img", cv2.WINDOW_NORMAL)
-                # cv2.imshow('multi_img',img)
+                center=i
+                prev_circle=center
+                
 #                     cv2.waitKey(0)
 #                     cv2.destroyAllWindows()
-        return img,1
-    else:
-        return img,0
+    print(prev_circle)
+    cv2.circle(img, (prev_circle[0]-2, prev_circle[1]), prev_circle[2]+69, (255,255, 255), -1)
+
+    cv2.circle(img, (prev_circle[0], prev_circle[1]), prev_circle[2], (0, 255, 0), 2)
+    cv2.namedWindow("multi_img", cv2.WINDOW_NORMAL)
+    cv2.imshow('multi_img',img)
+    return img,1
+
     
 def hconcat_resize(img_list,
                    interpolation=cv2.INTER_CUBIC):
@@ -92,9 +97,16 @@ good = image_loc("muvro/sona_data")
 
 
 # pin=[[171, 146, 44, 45], [475, 160, 35, 38], [468, 326, 38, 38], [174, 319, 35, 36]]
-bolt = [[314, 116, 26, 24], [342, 116, 29, 25], [374, 126, 26, 27], [399, 144, 23, 30], [418, 171, 21, 29], [430, 201, 16, 31], [431, 227, 14, 35], [415, 259, 18, 29], [396, 284, 20, 25], [367, 304, 25, 22], [335, 305, 29, 30], [305, 310, 28, 21], [273, 297, 28, 24], [250, 277, 26, 26], [236, 253, 23, 29], [230, 220, 20, 34], [232, 191, 20, 31], [241, 162, 20, 31], [261, 143, 24, 25], [283, 127, 29, 18]]
-# param={"min1": 153, "max1": 219, "min2": 164, "max2": 223, "min3": 184, "max3": 255, "min4": 183, "max4": 259, "min5": 192, "max5": 252, "min6": 138, "max6": 245, "min7": 126, "max7": 237, "min8": 97, "max8": 230, "min9": 85, "max9": 252, "min10": 75, "max10": 210, "min11": 62, "max11": 187, "min12": 51, "max12": 209, "min13": 102, "max13": 253, "min14": 77, "max14": 245, "min15": 88, "max15": 238, "min16": 164, "max16": 256, "min17": 116, "max17": 240, "min18": 71, "max18": 217, "min19": 94, "max19": 256, "min20": 170, "max20": 286}
-# param={'min1': 192, 'max1': 196, 'min2': 193, 'max2': 199, 'min3': 240, 'max3': 248, 'min4': 236, 'max4': 243, 'min5': 238, 'max5': 245, 'min6': 232, 'max6': 242, 'min7': 222, 'max7': 232, 'min8': 222, 'max8': 230, 'min9': 241, 'max9': 248, 'min10': 199, 'max10': 206, 'min11': 177, 'max11': 184, 'min12': 197, 'max12': 205, 'min13': 232, 'max13': 240, 'min14': 221, 'max14': 229, 'min15': 230, 'max15': 236, 'min16': 232, 'max16': 240, 'min17': 231, 'max17': 237, 'min18': 173, 'max18': 177, 'min19': 211, 'max19': 216, 'min20': 231, 'max20': 241}
+bolt = [[314, 116, 26, 24], [342, 116, 29, 25], 
+        [374, 126, 26, 27], [399+2, 144, 23, 30], 
+        [418+2, 171-2, 21, 29], [430+3, 201, 16, 31],
+          [431+2, 227, 14+2, 35], [415, 259-2, 18+4, 29], 
+          [396, 284-2, 20+3, 25], [367+2, 304, 25, 22], 
+          [335, 305, 29, 30], [305, 310, 28, 21], 
+          [273, 297, 28, 24], [250, 277, 26, 26], 
+          [236, 253, 23, 29], [230, 220, 20, 34], 
+          [232, 191, 20, 31], [241, 162, 20, 31], 
+          [261, 143-2, 24, 25], [283, 127-2, 29, 18]]
 
 
 param = {}
@@ -105,14 +117,19 @@ pause = 0
 while (1):
 
     img1 = cap.get_frame((680, 500))
-
+    img2=img1.copy()
     # img = cv2.cvtColor(img1, cv2.COLOR_BGR2GRAY)
  
     # img2 = img.copy()
 
     rois = []
+    r=(231, 123, 217, 202)
+    roi_circle = img2[int(r[1]):int(r[1]+r[3]), 
+                        int(r[0]):int(r[0]+r[2])]
+    c_img2,_=detectCircle(roi_circle)
+    img2[int(r[1]):int(r[1]+r[3]), int(r[0]):int(r[0]+r[2])]=c_img2
 
-    img2,_=detectCircle(img1.copy())
+    # img2,_=detectCircle(img1.copy())
     if _==0:
         print("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
     img2 = cv2.cvtColor(img2, cv2.COLOR_BGR2GRAY)
@@ -140,7 +157,7 @@ while (1):
             roi = thresh[int(r[1]):int(r[1]+r[3]),
                          int(r[0]):int(r[0]+r[2])]
 
-            bl = cv2.medianBlur(roi, 9)
+            bl = cv2.medianBlur(roi, 5)
             cv2.imshow("blur",bl)
             roi = cv2.Canny(bl,120,189)
 
@@ -162,7 +179,7 @@ while (1):
         roiss = vconcat_resize([hconcat_resize(rois[:5]), hconcat_resize(
             rois[5:10]), hconcat_resize(rois[10:15]), hconcat_resize(rois[15:20])])
         roiss = cv2.resize(roiss, (400, 400))
-        print(param)
+        # print(param)
         cv2.imshow("roiss", roiss)
 
         cv2.imshow("image", img1)
@@ -176,9 +193,9 @@ cv2.destroyAllWindows()
 print(param)
 
 
-param=json.dumps(param)
-with open("muvro/boltsparam.json", "w") as dic:
-    dic.write(param)
+# param=json.dumps(param)
+# with open("muvro/boltsparam.json", "w") as dic:
+#     dic.write(param)
 
 bolt=json.dumps(bolt)
 with open("muvro/bolts.json", "w") as dic:

@@ -91,7 +91,7 @@ if __name__=="__main__":
         # cv.imshow("overlay",img)
         # cv.imshow("overlay image",overlay)
         # cv.imshow("overlay reverd",reversd)
-        cv.circle(frame,(333,221),90,(255,255,255),-1)
+        # cv.circle(frame,(333,221),90,(255,255,255),-1)
 
         cv.imshow("actual",frame)
         k=cv.waitKey(1)
