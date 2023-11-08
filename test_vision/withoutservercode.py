@@ -14,7 +14,11 @@ from muvro.pred_isoplate import *
 from muvro.predbolts import *
 from muvro.pred_spherical1 import *
 from muvro.predpin import pred_pins
-
+from tensorflow import keras
+from newbolt.predbolt_model import pred_boltsmodel
+from newbolt.predspher_model import pred_sphericalmodel
+from newbolt.predpin_model import  pred_pinmodel
+from newbolt.predreturning_model import pred_returnmodel
 from tkinter import messagebox
 from muvro.camera import checkcamera
 
@@ -23,6 +27,29 @@ NO_OF_COMPONENTS = 6
 cap = cv2.VideoCapture("first.avi")
 cap1 = cv2.VideoCapture("sec.avi")
 cap2 = cv2.VideoCapture("bolts.avi")
+
+
+
+##########                 models   #######################
+
+boltmodel=keras.models.load_model('newbolt/boltmodel(1).h5')
+sphermodel=keras.models.load_model('newbolt/sphericalmodel(1).h5')
+pinmodel=keras.models.load_model('newbolt/pinsmodel.h5')
+returnmodel=keras.models.load_model('newbolt/pinretuningmodel(2).h5')
+
+
+
+
+#########################################
+
+
+
+
+
+
+
+
+
 # =========================server==========================================
 import socket
 # read_sig={"VI_CAMERA_READY":1}
@@ -190,13 +217,13 @@ def cam_plate_detection_ui(image_path, cam_plate_frame, raw_frame):
 # -----------------------------------------------------------  Moving Plate Backened  ------------------------------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def moving_plate_detection_ui(frame, moving_plate_frame, raw_frame):
+def moving_plate_detection_ui(frame, moving_plate_frame, raw_frame):           
     global moving_plate_no, moving_plate_yes, moving_img_lbl, terminate3, raw_moving_img_lbl, processed_img_lbl, sub_counter, counter
 
     try:
         img = frame
 
-        im, out = pred_moving_plate(img.copy())
+        im, out = pred_returnmodel(image=img.copy(),model=returnmodel)
 
         filename = f"/home/aspagteq/Documents/after_assembly/test_vision/muvro/result/moving_plate.jpg"
         cv2.imwrite(filename, img)
@@ -312,7 +339,7 @@ def spherical_washer_detection_ui(image, spherical_washer_frame, raw_frame):
     try:
         img = image
 
-        im, out = pred_spherical1(img.copy())
+        im, out = pred_sphericalmodel(image=img.copy(),model=sphermodel)
 
         filename = f"/home/aspagteq/Documents/after_assembly/test_vision/muvro/result/spherical_washer.jpg"
         cv2.imwrite(filename, img)
@@ -371,7 +398,7 @@ def bolts_detection_ui(image_path, bolt_frame, raw_frame):
     try:
         img = image_path
 
-        im, out = pred_bolts(img.copy())
+        im, out = pred_boltsmodel(image=img.copy(),model=boltmodel)
 
         filename = f"/home/aspagteq/Documents/after_assembly/test_vision/muvro/result/bolts.jpg"
         cv2.imwrite(filename, img)
@@ -598,10 +625,13 @@ def check_components():
 
                     bolts_detection_ui(topCamera.copy(), bolts_frame, raw_bolts_frame)
                     # pin_detection_ui(topCamera, D_shape_frame, raw_D_shape_frame)
-                    img,Pin_detect=pred_pins(topCamera.copy())
+                    img,Pin_detect=pred_pinmodel(image=topCamera.copy(),model=pinmodel)
                     if Pin_detect==1:
                         D_shape_frame.configure(bg="green")
                         PD_DETECT+=1
+                    if Pin_detect==0:
+                        D_shape_frame.configure(bg="red")
+                    
 
                     # give signal to port depending on sub - counter
                     if sub_counter == NO_OF_COMPONENTS:
@@ -612,7 +642,7 @@ def check_components():
                         pass
                 global shape_y, spherical_yes, bolt_yes, isolated_yes, cam_plate_yes, moving_plate_yes
 
-                if PD_DETECT > 1:
+                if PD_DETECT > 2:
                     Pin = 1
                     PD_DETECT = 0
                 else:
@@ -626,7 +656,7 @@ def check_components():
                     spherical_yes = 0
                     Spherical = 2
 
-                if bolt_yes > 0:
+                if bolt_yes > 2:
                     Bolt = 1
                     bolt_yes = 0
                 else:
@@ -653,6 +683,7 @@ def check_components():
                 else:
                     moving_plate_yes = 0
                     Moving = 2
+                    Camplate = 2
 
                 # Send data to remote
                 SIGNAL_DICT = {"VI_20_BOLT_CHECK": Bolt,
@@ -681,6 +712,7 @@ def check_components():
                         server_restart=1
                         recieved_data=0
                         break
+
             else:
                 # No trigger
                 pass

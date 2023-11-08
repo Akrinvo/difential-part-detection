@@ -162,6 +162,7 @@ if __name__ == "__main__":
     cap = camera_streams(mode="Industrial")
     images=image_loc("/home/aspagteq/Documents/after_assembly/test_vision/muvro/sona_data")
     for i in range(10) :
+    # while(True):
         frame = cap.get_frame((680, 500))
         img, out = pred_pins(frame)
         cv2.imshow("img", img)

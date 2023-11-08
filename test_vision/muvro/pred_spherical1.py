@@ -30,7 +30,7 @@ def pred_spherical1(image):
     try:    img=cv2.imread(image)
     except:img=image
     gray=cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
-
+    cv2.imshow("gray:",gray)
 
     img=cv2.rectangle(img,(r[0],r[1]),(r[0]+r[2],r[1]+r[3]),255,1)
 
@@ -39,14 +39,14 @@ def pred_spherical1(image):
     bl1=cv2.GaussianBlur(roi,(3,3),cv2.BORDER_DEFAULT)
 
     bl1[bl1>25]=255
-    # cv2.imshow("bl1",bl1)
+    cv2.imshow("bl1",bl1)
     h,w=bl1.shape
 
 
     n_black=np.count_nonzero(bl1==255)
     
     roi=cv2.resize(roi,(400,400))
-    # cv2.imshow("roi",roi)
+    cv2.imshow("roi",roi)
     if mi+20>n_black:
                 img=cv2.putText(img,"NG",(20,50),cv2.FONT_HERSHEY_COMPLEX,2,(0,0,255),2)
                 img=cv2.rectangle(img,(r[0],r[1]),(r[0]+r[2],r[1]+r[3]),(0,0,255),3)

@@ -39,8 +39,9 @@ def pred_camplate(image):
     n_white=np.count_nonzero(roi == 255)
     
     roi=cv2.resize(roi,(400,400))
-    
-    if mi-1500>n_white:
+    # cv2.imshow("roi",roi)
+    # print(mi,n_white)
+    if mi-1000>n_white:
                 img=cv2.putText(img,"NG",(20,50),cv2.FONT_HERSHEY_COMPLEX,2,(0,0,255),2)
                 img=cv2.rectangle(img,(r[0],r[1]),(r[0]+r[2],r[1]+r[3]),(0,0,255),3)
                 overlay = np.zeros_like(img)
